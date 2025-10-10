@@ -1,1 +1,7 @@
 test <h2>{{title}}</h2>
+
+<ul>
+    @for (member of members(); track member.id) {
+        <li>{{member.id}} - {{member.displayName}}</li>
+    }
+</ul>
