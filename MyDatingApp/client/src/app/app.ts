@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,13 +14,16 @@ export class App implements OnInit{
   protected readonly title = signal('client');
   protected members = signal<any>([]);
   
-  ngOnInit(): void {
-    this.http.get('https://localhost:5001/api/members').subscribe({
-      next: (Response) => this.members.set(Response),
-      error: (error) => console.error(error),
-      complete: () => console.log('Request complete')
-    })
+  async ngOnInit() {
+    this.members.set(await this.getMembers());
   }
 
-  //constructor(private http: HttpClient){}
+  async getMembers(){
+    try {
+      return lastValueFrom(this.http.get('https://localhost:5001/api/members'));
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }
